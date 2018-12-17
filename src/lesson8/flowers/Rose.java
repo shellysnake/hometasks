@@ -1,4 +1,4 @@
-package lesson8.Flowers;
+package lesson8.flowers;
 
 import java.util.Objects;
 

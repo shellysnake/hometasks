@@ -9,7 +9,6 @@ public class AnimalsDemo {
         Dog dog1 = new Dog("Bones", "Kharkiv", "Doggy");
         Horse horse1 = new Horse("Grass", "Kharkiv", 9);
         Veterinarian veterinarian1 = new Veterinarian();
-
         Animal[] animals = {cat1, dog1, horse1};
         for (Animal animal : animals) {
             veterinarian1.treatAnimal(animal);

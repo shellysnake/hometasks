@@ -63,19 +63,19 @@ public class Car {
     }
 
     public void start() {
-        System.out.println("Поехали");
+        System.out.println("Поехали " + this.carModel);
     }
 
     public void stop() {
-        System.out.println("Останавливаемся");
+        System.out.println("Останавливаемся " + this.carModel);
     }
 
     public void turnRight() {
-        System.out.println("Поворот направо");
+        System.out.println("Поворот направо " + this.carModel);
     }
 
     public void turnLeft() {
-        System.out.println("Поворот налево");
+        System.out.println("Поворот налево " + this.carModel);
     }
 
     @Override

@@ -1,8 +1,9 @@
-package lesson9.shop.user;
+package shop.user;
 
-import lesson9.shop.basket.Basket;
+import shop.basket.Basket;
 
 import java.util.Objects;
+import java.util.Scanner;
 
 public class User {
     private String login, password;
@@ -39,6 +40,18 @@ public class User {
 
     public void setBasket(Basket basket) {
         this.basket = basket;
+    }
+
+    public void authUser() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите логин: ");
+        if (scanner.hasNextLine()) {
+            this.setLogin(scanner.nextLine());
+            System.out.println("Введите пароль: ");
+            if (scanner.hasNextLine()) {
+                this.setPassword(scanner.nextLine());
+            }
+        }
     }
 
     @Override

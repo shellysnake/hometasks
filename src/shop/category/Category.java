@@ -1,6 +1,6 @@
-package lesson9.shop.category;
+package shop.category;
 
-import lesson9.shop.product.Product;
+import shop.product.Product;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -31,6 +31,16 @@ public class Category {
 
     public void setProduct(Product[] product) {
         this.product = product;
+    }
+
+    public static void showCategory(Category[] categories) {
+        for (Category category : categories) {
+            System.out.println("Категория: " + category.getName() + ", товары: ");
+            for (Product product : category.getProduct()) {
+                System.out.print(product);
+            }
+            System.out.println();
+        }
     }
 
     @Override

@@ -1,4 +1,4 @@
-package lesson9.shop.product;
+package shop.product;
 
 import java.util.Objects;
 

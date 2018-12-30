@@ -7,15 +7,9 @@ import java.util.Scanner;
 
 public class User {
     private String login, password;
-    private Basket basket;
+    private Basket basket = new Basket();
 
     public User() {
-    }
-
-    public User(String login, String password, Basket basket) {
-        this.login = login;
-        this.password = password;
-        this.basket = basket;
     }
 
     public String getLogin() {

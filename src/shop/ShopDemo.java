@@ -1,16 +1,15 @@
 package shop;
 
 import shop.actions.Actions;
-import shop.basket.Basket;
 import shop.category.Category;
 import shop.product.Product;
 import shop.user.User;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class ShopDemo {
+    public static User user = new User();
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -27,13 +26,10 @@ public class ShopDemo {
         Category tablets = new Category("Tablets", products1);
 
         Category[] categories = {laptops, tablets};
-        List<Product> basketList = new ArrayList<>();
-        Basket basket = new Basket(basketList, categories);
-        User user = new User();
-        menu(scanner, categories, basket, user);
+        menu(scanner, categories);
     }
 
-    private static void menu(Scanner scanner, Category[] categories, Basket basket, User user) {
+    private static void menu(Scanner scanner, Category[] categories) {
         System.out.println("Введите действие: AUTHENTICATION - Регистрация, SHOWGOODS - Показать товары выбранной категории, " +
                 "SHOWCATALOGS - Показать категории");
         System.out.println("CHOOSEPRODUCT - Добавить выбранный товар в корзину, SHOPPING - Покупка товаров в корзине");
@@ -52,20 +48,31 @@ public class ShopDemo {
                     Category.showCategory(categories);
                     break;
                 case CHOOSEPRODUCT:
-                    basket.addToBasket();
-                    System.out.println(basket);
+                    addToBasket(scanner, categories, user);
+                    System.out.println(user);
                     break;
                 case SHOPPING:
-                    basket.shopping();
-                    System.out.println(basket);
+                    user.getBasket().shopping();
+                    System.out.println(user);
                     break;
             }
             System.out.println("Хотите совершить еще одно действие? Y/N");
             if (scanner.hasNextLine()) {
                 String act1 = scanner.nextLine();
                 if (act1.equals("Y")) {
-                    menu(scanner, categories, basket, user);
+                    menu(scanner, categories);
                 }
+            }
+        }
+    }
+
+    private static void addToBasket(Scanner scanner, Category[] categories, User user) {
+        user.getBasket().addToBasket(categories);
+        System.out.println("Добавить еще один товар в корзину? Y/N");
+        if (scanner.hasNextLine()) {
+            String act1 = scanner.nextLine();
+            if (act1.equals("Y")) {
+                addToBasket(scanner, categories, user);
             }
         }
     }

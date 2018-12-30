@@ -3,20 +3,15 @@ package shop.basket;
 import shop.category.Category;
 import shop.product.Product;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class Basket {
-    private List<Product> products;
-    private Category[] categories;
+    private List<Product> products = new ArrayList<>();
 
     public Basket() {
-    }
-
-    public Basket(List<Product> products, Category[] categories) {
-        this.products = products;
-        this.categories = categories;
     }
 
     public List<Product> getProducts() {
@@ -27,15 +22,7 @@ public class Basket {
         this.products = products;
     }
 
-    public Category[] getCategories() {
-        return categories;
-    }
-
-    public void setCategories(Category[] categories) {
-        this.categories = categories;
-    }
-
-    public void addToBasket() {
+    public void addToBasket(Category[] categories) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Введите название категории выбранного товара");
         if (scanner.hasNextLine()) {
@@ -57,7 +44,7 @@ public class Basket {
     }
 
     public void shopping() {
-        this.products.removeAll(this.products);
+        this.products.clear();
     }
 
     @Override

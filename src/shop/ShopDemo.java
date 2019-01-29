@@ -81,7 +81,6 @@ public class ShopDemo {
                         for (Product product : products1) {
                             System.out.println(product);
                         }
-
                     }
                     break;
             }

@@ -3,13 +3,12 @@ package shop.basket;
 import shop.category.Category;
 import shop.product.Product;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class Basket {
     private List<Product> products = new ArrayList<>();
+    private LocalDateTime time;
 
     public Basket() {
     }
@@ -32,7 +31,7 @@ public class Basket {
                     System.out.println("Введите название товара, который вы хотите добавить в корзину");
                     if (scanner.hasNextLine()) {
                         String productName = scanner.nextLine();
-                        for (Product product : category.getProduct()) {
+                        for (Product product : category.getProducts()) {
                             if (product.getName().equals(productName)) {
                                 this.products.add(product);
                             }
@@ -44,6 +43,13 @@ public class Basket {
     }
 
     public void shopping() {
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        int month = now.getMonthValue();
+        int dayYear = now.getDayOfYear();
+        int hour = now.getHour();
+        int minute = now.getMinute();
+        this.time = LocalDateTime.of(year, month, dayYear, hour, minute);
         this.products.clear();
     }
 

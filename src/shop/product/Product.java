@@ -2,7 +2,7 @@ package shop.product;
 
 import java.util.Objects;
 
-public class Product {
+public class Product implements Comparable<Product> {
     private String name;
     private double price;
     private int rank;
@@ -38,6 +38,17 @@ public class Product {
 
     public void setRank(int rank) {
         this.rank = rank;
+    }
+
+    @Override
+    public int compareTo(Product o) {
+        int anotherProductRank = o.getRank();
+        int result = this.rank - anotherProductRank;
+        if (result != 0) {
+            return result;
+        } else {
+            return (int) (this.price - o.getPrice());
+        }
     }
 
     @Override

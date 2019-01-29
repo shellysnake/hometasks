@@ -2,19 +2,20 @@ package shop.category;
 
 import shop.product.Product;
 
-import java.util.Arrays;
 import java.util.Objects;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class Category {
     private String name;
-    private Product[] product;
+    private SortedSet<Product> products = new TreeSet<>();
 
     public Category() {
     }
 
-    public Category(String name, Product[] product) {
+    public Category(String name, SortedSet<Product> products) {
         this.name = name;
-        this.product = product;
+        this.products = products;
     }
 
     public String getName() {
@@ -25,18 +26,18 @@ public class Category {
         this.name = name;
     }
 
-    public Product[] getProduct() {
-        return product;
+    public SortedSet<Product> getProducts() {
+        return products;
     }
 
-    public void setProduct(Product[] product) {
-        this.product = product;
+    public void setProducts(SortedSet<Product> products) {
+        this.products = products;
     }
 
     public static void showCategory(Category[] categories) {
         for (Category category : categories) {
             System.out.println("Категория: " + category.getName() + ", товары: ");
-            for (Product product : category.getProduct()) {
+            for (Product product : category.getProducts()) {
                 System.out.print(product);
             }
             System.out.println();
@@ -47,7 +48,7 @@ public class Category {
     public String toString() {
         return "Category{" +
                 "name='" + name + '\'' +
-                ", product=" + Arrays.toString(product) +
+                ", products=" + products +
                 '}';
     }
 
@@ -57,13 +58,11 @@ public class Category {
         if (o == null || getClass() != o.getClass()) return false;
         Category category = (Category) o;
         return Objects.equals(name, category.name) &&
-                Arrays.equals(product, category.product);
+                Objects.equals(products, category.products);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(name);
-        result = 31 * result + Arrays.hashCode(product);
-        return result;
+        return Objects.hash(name, products);
     }
 }

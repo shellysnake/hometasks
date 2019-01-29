@@ -2,34 +2,43 @@ package shop;
 
 import shop.actions.Actions;
 import shop.category.Category;
+import shop.comparators.ProductComparatorName;
+import shop.comparators.ProductComparatorPrice;
 import shop.product.Product;
 import shop.user.User;
 
-import java.util.Scanner;
+import java.net.SocketException;
+import java.util.*;
 
 public class ShopDemo {
     public static User user = new User();
 
     public static void main(String[] args) {
+        ProductComparatorPrice productComparatorPrice = new ProductComparatorPrice();
+        ProductComparatorName productComparatorName = new ProductComparatorName();
         Scanner scanner = new Scanner(System.in);
 
-        Product product1 = new Product("Asus", 35573, 1);
-        Product product2 = new Product("Asus VivoBook 15", 15399, 2);
-        Product product3 = new Product("Dell Inspirion 3552", 6779, 3);
-        Product[] products = {product1, product2, product3};
+        SortedSet<Product> products = new TreeSet<>();
+        products.add(new Product("Asus", 35573, 5));
+        products.add(new Product("Asus VivoBook 15", 15399, 2));
+        products.add(new Product("AaDell Inspirion 3552", 6779, 2));
         Category laptops = new Category("Laptops", products);
 
-        Product product4 = new Product("Lenovo Tab4-x304L", 5500, 1);
-        Product product5 = new Product("Lenovo Tab4 plus TB-8704F", 8750, 1);
-        Product product6 = new Product("Nomi C101040 Plus3", 3399, 3);
-        Product[] products1 = {product4, product5, product6};
+        SortedSet<Product> products1 = new TreeSet<>();
+        products1.add(new Product("Lenovo Tab4-x304L", 5500, 4));
+        products1.add(new Product("Lenovo Tab4 plus TB-8704F", 8750, 1));
+        products1.add(new Product("Nomi C101040 Plus3", 3399, 5));
         Category tablets = new Category("Tablets", products1);
 
         Category[] categories = {laptops, tablets};
-        menu(scanner, categories);
+        Map<String, String> loginData = new HashMap<>();
+        loginData.put("login", "qwerty");
+        loginData.put("login1", "password");
+
+        menu(scanner, categories, loginData, productComparatorPrice, productComparatorName);
     }
 
-    private static void menu(Scanner scanner, Category[] categories) {
+    private static void menu(Scanner scanner, Category[] categories, Map<String, String> map, ProductComparatorPrice productComparatorPrice, ProductComparatorName productComparatorName) {
         System.out.println("Введите действие: AUTHENTICATION - Регистрация, SHOWGOODS - Показать товары выбранной категории, " +
                 "SHOWCATALOGS - Показать категории");
         System.out.println("CHOOSEPRODUCT - Добавить выбранный товар в корзину, SHOPPING - Покупка товаров в корзине");
@@ -39,7 +48,9 @@ public class ShopDemo {
             switch (action) {
                 case AUTHENTICATION:
                     user.authUser();
-                    System.out.println(user);
+                    if (map.containsKey(user.getLogin()) && (map.get(user.getLogin()).equals(user.getPassword()))) {
+                        System.out.println("User authenticated");
+                    }
                     break;
                 case SHOWGOODS:
                     showGoods(scanner, categories);
@@ -55,12 +66,30 @@ public class ShopDemo {
                     user.getBasket().shopping();
                     System.out.println(user);
                     break;
+                case SORT:
+                    for (Category category : categories) {
+                        System.out.printf("Категория - %s\n", category.getName());
+                        System.out.println("По цене");
+                        SortedSet<Product> products = new TreeSet<>(productComparatorPrice);
+                        products.addAll(category.getProducts());
+                        for (Product product : products) {
+                            System.out.println(product);
+                        }
+                        System.out.println("По имени");
+                        SortedSet<Product> products1 = new TreeSet<>(productComparatorName);
+                        products1.addAll(category.getProducts());
+                        for (Product product : products1) {
+                            System.out.println(product);
+                        }
+
+                    }
+                    break;
             }
             System.out.println("Хотите совершить еще одно действие? Y/N");
             if (scanner.hasNextLine()) {
                 String act1 = scanner.nextLine();
                 if (act1.equals("Y")) {
-                    menu(scanner, categories);
+                    menu(scanner, categories, map, productComparatorPrice, productComparatorName);
                 }
             }
         }
@@ -83,7 +112,7 @@ public class ShopDemo {
             String str = scanner.nextLine();
             for (Category category : categories) {
                 if (category.getName().equals(str)) {
-                    for (Product product : category.getProduct()) {
+                    for (Product product : category.getProducts()) {
                         System.out.print(product);
                     }
                 }

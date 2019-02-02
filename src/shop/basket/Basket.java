@@ -1,12 +1,16 @@
 package shop.basket;
 
-import shop.category.Category;
 import shop.product.Product;
 
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class Basket {
+import static shop.ShopDemo.scanner;
+import static shop.category.Category.categories;
+import static shop.ShopDemo.user;
+
+public class Basket implements Serializable {
     private List<Product> products = new ArrayList<>();
     private LocalDateTime time;
 
@@ -21,36 +25,54 @@ public class Basket {
         this.products = products;
     }
 
-    public void addToBasket(Category[] categories) {
-        Scanner scanner = new Scanner(System.in);
+    public void addToBasket() {
         System.out.println("Введите название категории выбранного товара");
         if (scanner.hasNextLine()) {
             String catName = scanner.nextLine();
-            for (Category category : categories) {
-                if (category.getName().equals(catName)) {
-                    System.out.println("Введите название товара, который вы хотите добавить в корзину");
-                    if (scanner.hasNextLine()) {
-                        String productName = scanner.nextLine();
-                        for (Product product : category.getProducts()) {
-                            if (product.getName().equals(productName)) {
-                                this.products.add(product);
-                            }
+            if (categories.containsKey(catName)) {
+                SortedSet<Product> products = categories.get(catName);
+                System.out.println("Введите название товара, который вы хотите добавить в корзину");
+                if (scanner.hasNextLine()) {
+                    String productName = scanner.nextLine();
+                    for (Product product : products) {
+                        if (product.getName().equals(productName)) {
+                            this.products.add(product);
+                            System.out.println("Товар успешно добавлен");
                         }
                     }
                 }
+
             }
         }
     }
 
     public void shopping() {
-        LocalDateTime now = LocalDateTime.now();
-        int year = now.getYear();
-        int month = now.getMonthValue();
-        int dayYear = now.getDayOfYear();
-        int hour = now.getHour();
-        int minute = now.getMinute();
-        this.time = LocalDateTime.of(year, month, dayYear, hour, minute);
+        this.time = LocalDateTime.now();
+        try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter("src/shop/io/inf_about_purchase.txt")))) {
+            pw.printf("User: %s , made a purchase %s. Date - %s", user.getLogin(), user.getBasket(), this.time);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
         this.products.clear();
+    }
+
+    public void serialize() {
+        try (FileOutputStream fs = new FileOutputStream("src/shop/io/basket_s.ser");
+             ObjectOutputStream os = new ObjectOutputStream(fs)) {
+            os.writeObject(user.getBasket());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public Basket deserialize() {
+        try (FileInputStream fs = new FileInputStream("src/shop/io/basket_s.ser");
+             ObjectInputStream os = new ObjectInputStream(fs)) {
+            return (Basket) os.readObject();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 
     @Override

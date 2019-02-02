@@ -2,12 +2,16 @@ package shop.user;
 
 import shop.basket.Basket;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Scanner;
+
+import static shop.ShopDemo.scanner;
 
 public class User {
     private String login, password;
     private Basket basket = new Basket();
+    public static Map<String, String> loginData = new HashMap<>();
 
     public User() {
     }
@@ -37,15 +41,40 @@ public class User {
     }
 
     public void authUser() {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Введите логин: ");
         if (scanner.hasNextLine()) {
-            this.setLogin(scanner.nextLine());
-            System.out.println("Введите пароль: ");
+            String login = scanner.nextLine();
+            System.out.println("Введите пароль и повторите ввод");
             if (scanner.hasNextLine()) {
-                this.setPassword(scanner.nextLine());
+                String password = scanner.nextLine();
+                if (scanner.hasNextLine()) {
+                    String confPassword = scanner.nextLine();
+                    if (isAuthCorrect(login, password, confPassword) && loginData.containsKey(login) &&
+                            (loginData.get(login).equals(password))) {
+                        this.login = login;
+                        this.password = password;
+                        System.out.println("User authenticated");
+                    }
+                }
             }
         }
+    }
+
+    public static boolean isAuthCorrect(String login, String password, String confirmPassword) {
+        try {
+            if (!login.matches("^[a-zA-Z0-9_-]{5,19}$")) {
+                throw new WrongLoginException("Login > 20");
+            }
+            if (!password.matches("^[a-zA-Z0-9_-]{5,19}$") || !password.equals(confirmPassword)) {
+                throw new WrongPasswordException("Password>20 or Password != confirmPassword");
+            }
+        } catch (WrongLoginException | WrongPasswordException e) {
+            System.out.println(e.getMessage());
+            return false;
+        } finally {
+            System.out.printf("Login %s, password %s, confPassword %s \n", login, password, confirmPassword);
+        }
+        return true;
     }
 
     @Override

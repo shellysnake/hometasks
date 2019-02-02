@@ -1,8 +1,9 @@
 package shop.product;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Product implements Comparable<Product> {
+public class Product implements Comparable<Product>, Serializable {
     private String name;
     private double price;
     private int rank;

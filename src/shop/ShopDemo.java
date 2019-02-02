@@ -7,59 +7,58 @@ import shop.comparators.ProductComparatorPrice;
 import shop.product.Product;
 import shop.user.User;
 
-import java.net.SocketException;
+import static shop.category.Category.categories;
+import static shop.user.User.loginData;
+
 import java.util.*;
 
 public class ShopDemo {
     public static User user = new User();
+    private static ProductComparatorPrice productComparatorPrice = new ProductComparatorPrice();
+    private static ProductComparatorName productComparatorName = new ProductComparatorName();
+    public static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        ProductComparatorPrice productComparatorPrice = new ProductComparatorPrice();
-        ProductComparatorName productComparatorName = new ProductComparatorName();
-        Scanner scanner = new Scanner(System.in);
+        initialization();
+        menu();
+    }
 
+    private static void initialization() {
         SortedSet<Product> products = new TreeSet<>();
         products.add(new Product("Asus", 35573, 5));
         products.add(new Product("Asus VivoBook 15", 15399, 2));
         products.add(new Product("AaDell Inspirion 3552", 6779, 2));
-        Category laptops = new Category("Laptops", products);
 
         SortedSet<Product> products1 = new TreeSet<>();
-        products1.add(new Product("Lenovo Tab4-x304L", 5500, 4));
         products1.add(new Product("Lenovo Tab4 plus TB-8704F", 8750, 1));
+        products1.add(new Product("aLenovo Tab4-x304L", 5500, 4));
         products1.add(new Product("Nomi C101040 Plus3", 3399, 5));
-        Category tablets = new Category("Tablets", products1);
 
-        Category[] categories = {laptops, tablets};
-        Map<String, String> loginData = new HashMap<>();
-        loginData.put("login", "qwerty");
-        loginData.put("login1", "password");
-
-        menu(scanner, categories, loginData, productComparatorPrice, productComparatorName);
+        categories.put("Laptops", products);
+        categories.put("Tablets", products1);
+        loginData.put("login1", "qwerty332");
+        loginData.put("login2", "password");
     }
 
-    private static void menu(Scanner scanner, Category[] categories, Map<String, String> map, ProductComparatorPrice productComparatorPrice, ProductComparatorName productComparatorName) {
-        System.out.println("Введите действие: AUTHENTICATION - Регистрация, SHOWGOODS - Показать товары выбранной категории, " +
-                "SHOWCATALOGS - Показать категории");
-        System.out.println("CHOOSEPRODUCT - Добавить выбранный товар в корзину, SHOPPING - Покупка товаров в корзине");
+    private static void menu() {
+        System.out.println("Введите действие: AUTHENTICATION - Регистрация, SHOW_GOODS - Показать товары выбранной категории, " +
+                "SHOW_CATALOGS - Показать категории");
+        System.out.println("CHOOSE_PRODUCT - Добавить выбранный товар в корзину, SHOPPING - Покупка товаров в корзине");
         if (scanner.hasNextLine()) {
             String act = scanner.nextLine();
             Actions action = Actions.valueOf(act);
             switch (action) {
                 case AUTHENTICATION:
                     user.authUser();
-                    if (map.containsKey(user.getLogin()) && (map.get(user.getLogin()).equals(user.getPassword()))) {
-                        System.out.println("User authenticated");
-                    }
                     break;
-                case SHOWGOODS:
-                    showGoods(scanner, categories);
+                case SHOW_GOODS:
+                    showGoods();
                     break;
-                case SHOWCATALOGS:
-                    Category.showCategory(categories);
+                case SHOW_CATALOGS:
+                    Category.showCategory();
                     break;
-                case CHOOSEPRODUCT:
-                    addToBasket(scanner, categories, user);
+                case CHOOSE_PRODUCT:
+                    addToBasket();
                     System.out.println(user);
                     break;
                 case SHOPPING:
@@ -67,55 +66,60 @@ public class ShopDemo {
                     System.out.println(user);
                     break;
                 case SORT:
-                    for (Category category : categories) {
-                        System.out.printf("Категория - %s\n", category.getName());
+                    Set<Map.Entry<String, SortedSet<Product>>> categorySet = categories.entrySet();
+                    for (Map.Entry<String, SortedSet<Product>> category : categorySet) {
+                        System.out.printf("Категория - %s \n", category.getKey());
                         System.out.println("По цене");
                         SortedSet<Product> products = new TreeSet<>(productComparatorPrice);
-                        products.addAll(category.getProducts());
+                        products.addAll(category.getValue());
                         for (Product product : products) {
                             System.out.println(product);
                         }
                         System.out.println("По имени");
                         SortedSet<Product> products1 = new TreeSet<>(productComparatorName);
-                        products1.addAll(category.getProducts());
+                        products1.addAll(category.getValue());
                         for (Product product : products1) {
                             System.out.println(product);
                         }
                     }
+                    break;
+                case SERIALIZE:
+                    user.getBasket().serialize();
+                    break;
+                case DESERIALIZE:
+                    System.out.println(user.getBasket().deserialize());
                     break;
             }
             System.out.println("Хотите совершить еще одно действие? Y/N");
             if (scanner.hasNextLine()) {
                 String act1 = scanner.nextLine();
                 if (act1.equals("Y")) {
-                    menu(scanner, categories, map, productComparatorPrice, productComparatorName);
+                    menu();
                 }
             }
         }
     }
 
-    private static void addToBasket(Scanner scanner, Category[] categories, User user) {
-        user.getBasket().addToBasket(categories);
+    private static void addToBasket() {
+        user.getBasket().addToBasket();
         System.out.println("Добавить еще один товар в корзину? Y/N");
         if (scanner.hasNextLine()) {
             String act1 = scanner.nextLine();
             if (act1.equals("Y")) {
-                addToBasket(scanner, categories, user);
+                addToBasket();
             }
         }
     }
 
-    private static void showGoods(Scanner scanner, Category[] categories) {
+    private static void showGoods() {
         System.out.println("Введите название категории для просмотра товаров:");
         if (scanner.hasNextLine()) {
             String str = scanner.nextLine();
-            for (Category category : categories) {
-                if (category.getName().equals(str)) {
-                    for (Product product : category.getProducts()) {
-                        System.out.print(product);
-                    }
+            if (categories.containsKey(str)) {
+                SortedSet<Product> products = categories.get(str);
+                for (Product product : products) {
+                    System.out.println(product + "; ");
                 }
-                System.out.println();
             }
         }
     }

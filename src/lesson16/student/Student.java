@@ -50,7 +50,7 @@ public class Student {
         this.marks = marks;
     }
 
-    public void isExpelled() {
+    public boolean isExpelled() {
         Iterator<Integer> iterator = this.marks.iterator();
         Integer sumMarks = 0;
         while (iterator.hasNext()) {
@@ -58,8 +58,10 @@ public class Student {
         }
         if (sumMarks / this.marks.size() >= 3) {
             System.out.printf("Student %s is transferred to the next course\n", this.getName());
+            return false;
         } else {
             System.out.printf("Student %s expelled\n", this.getName());
+            return true;
         }
     }
 

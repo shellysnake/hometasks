@@ -2,6 +2,7 @@ package lesson16.student;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class StudentDemo {
@@ -12,9 +13,18 @@ public class StudentDemo {
         students.add(new Student("Student3", "group3", 2, Arrays.asList(5, 4, 5, 3, 3)));
         students.add(new Student("Student4", "group1", 3, Arrays.asList(5, 1, 1, 1, 1)));
         students.add(new Student("Student5", "group2", 1, Arrays.asList(5, 1, 1, 3, 2)));
-        for (Student student : students) {
-            student.isExpelled();
+        Iterator<Student> iterator = students.iterator();
+        while (iterator.hasNext()) {
+            Student student = iterator.next();
+            if (student.isExpelled()) {
+                iterator.remove();
+            }
         }
+
+        for (Student student : students) {
+            System.out.print(student + " \n");
+        }
+
         Student.printStudents(students, 3);
     }
 }

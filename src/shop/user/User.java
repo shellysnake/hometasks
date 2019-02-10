@@ -2,18 +2,28 @@ package shop.user;
 
 import shop.basket.Basket;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
-import static shop.ShopDemo.scanner;
-
 public class User {
+    private int id;
     private String login, password;
     private Basket basket = new Basket();
-    public static Map<String, String> loginData = new HashMap<>();
 
     public User() {
+    }
+
+    public User(int id, String login, String password) {
+        this.id = id;
+        this.login = login;
+        this.password = password;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getLogin() {
@@ -40,47 +50,11 @@ public class User {
         this.basket = basket;
     }
 
-    public void authUser() {
-        System.out.println("Введите логин: ");
-        if (scanner.hasNextLine()) {
-            String login = scanner.nextLine();
-            System.out.println("Введите пароль и повторите ввод");
-            if (scanner.hasNextLine()) {
-                String password = scanner.nextLine();
-                if (scanner.hasNextLine()) {
-                    String confPassword = scanner.nextLine();
-                    if (isAuthCorrect(login, password, confPassword) && loginData.containsKey(login) &&
-                            (loginData.get(login).equals(password))) {
-                        this.login = login;
-                        this.password = password;
-                        System.out.println("User authenticated");
-                    }
-                }
-            }
-        }
-    }
-
-    public static boolean isAuthCorrect(String login, String password, String confirmPassword) {
-        try {
-            if (!login.matches("^[a-zA-Z0-9_-]{5,19}$")) {
-                throw new WrongLoginException("Login > 20");
-            }
-            if (!password.matches("^[a-zA-Z0-9_-]{5,19}$") || !password.equals(confirmPassword)) {
-                throw new WrongPasswordException("Password>20 or Password != confirmPassword");
-            }
-        } catch (WrongLoginException | WrongPasswordException e) {
-            System.out.println(e.getMessage());
-            return false;
-        } finally {
-            System.out.printf("Login %s, password %s, confPassword %s \n", login, password, confirmPassword);
-        }
-        return true;
-    }
-
     @Override
     public String toString() {
         return "User{" +
-                "login='" + login + '\'' +
+                "id=" + id +
+                ", login='" + login + '\'' +
                 ", password='" + password + '\'' +
                 ", basket=" + basket +
                 '}';
@@ -91,13 +65,14 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(login, user.login) &&
+        return id == user.id &&
+                Objects.equals(login, user.login) &&
                 Objects.equals(password, user.password) &&
                 Objects.equals(basket, user.basket);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(login, password, basket);
+        return Objects.hash(id, login, password, basket);
     }
 }

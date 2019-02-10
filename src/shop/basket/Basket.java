@@ -6,8 +6,8 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static shop.ShopDemo.categoryDAO;
 import static shop.ShopDemo.scanner;
-import static shop.category.Category.categories;
 import static shop.ShopDemo.user;
 
 public class Basket implements Serializable {
@@ -29,8 +29,8 @@ public class Basket implements Serializable {
         System.out.println("Введите название категории выбранного товара");
         if (scanner.hasNextLine()) {
             String catName = scanner.nextLine();
-            if (categories.containsKey(catName)) {
-                SortedSet<Product> products = categories.get(catName);
+            if (categoryDAO.getCategories().containsKey(catName)) {
+                SortedSet<Product> products = categoryDAO.getCategories().get(catName);
                 System.out.println("Введите название товара, который вы хотите добавить в корзину");
                 if (scanner.hasNextLine()) {
                     String productName = scanner.nextLine();

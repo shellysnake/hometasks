@@ -1,21 +1,39 @@
 package shop.category;
 
-import shop.product.Product;
-
 import java.util.*;
 
 public class Category {
-    public static HashMap<String, SortedSet<Product>> categories = new HashMap<>();
+    private String name;
 
-    public static void showCategory() {
-        Set<Map.Entry<String, SortedSet<Product>>> categorySet = categories.entrySet();
-        for (Map.Entry<String, SortedSet<Product>> category : categorySet) {
-            System.out.printf("Категория - %s \n", category.getKey());
-            SortedSet<Product> products = new TreeSet<>();
-            products.addAll(category.getValue());
-            for (Product product : products) {
-                System.out.println(product);
-            }
-        }
+    public Category(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "name='" + name + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Category category = (Category) o;
+        return Objects.equals(name, category.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }

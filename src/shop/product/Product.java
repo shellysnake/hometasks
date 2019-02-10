@@ -4,17 +4,26 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class Product implements Comparable<Product>, Serializable {
+    private int id;
     private String name;
+    private String catName;
     private double price;
     private int rank;
 
-    public Product(String name, double price, int rank) {
+    public Product(int id, String name, String catName, double price, int rank) {
+        this.id = id;
         this.name = name;
+        this.catName = catName;
         this.price = price;
         this.rank = rank;
     }
 
-    public Product() {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -23,6 +32,14 @@ public class Product implements Comparable<Product>, Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCatName() {
+        return catName;
+    }
+
+    public void setCatName(String catName) {
+        this.catName = catName;
     }
 
     public double getPrice() {
@@ -55,7 +72,9 @@ public class Product implements Comparable<Product>, Serializable {
     @Override
     public String toString() {
         return "Product{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", catName='" + catName + '\'' +
                 ", price=" + price +
                 ", rank=" + rank +
                 '}';
@@ -66,13 +85,15 @@ public class Product implements Comparable<Product>, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Double.compare(product.price, price) == 0 &&
+        return id == product.id &&
+                Double.compare(product.price, price) == 0 &&
                 rank == product.rank &&
-                Objects.equals(name, product.name);
+                Objects.equals(name, product.name) &&
+                Objects.equals(catName, product.catName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, price, rank);
+        return Objects.hash(id, name, catName, price, rank);
     }
 }

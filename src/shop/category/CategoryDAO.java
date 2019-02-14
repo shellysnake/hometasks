@@ -14,13 +14,13 @@ public class CategoryDAO {
         Map<String, SortedSet<Product>> categories = new HashMap<>();
         List<String> categoryNames = new ArrayList<>();
         try (Connection connection = DBConnector.getConnection();
-             Statement statement = connection.createStatement()) {
+             Statement statement = connection.createStatement();
+             PreparedStatement ps = connection.prepareStatement(GET_PRODUCTS);) {
             ResultSet rs = statement.executeQuery(GET_CATEGORIES);
             while (rs.next()) {
                 String catName = rs.getString(1);
                 categoryNames.add(catName);
             }
-            PreparedStatement ps = connection.prepareStatement(GET_PRODUCTS);
             for (String name : categoryNames) {
                 SortedSet<Product> products = new TreeSet<>();
                 ps.setString(1, name);
@@ -35,7 +35,6 @@ public class CategoryDAO {
                 }
                 categories.put(name, products);
             }
-            ps.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

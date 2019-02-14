@@ -8,6 +8,8 @@ import shop.product.Product;
 import shop.product.ProductDAO;
 import shop.user.User;
 import shop.user.UserDAO;
+import shop.user.WrongLoginException;
+import shop.user.WrongPasswordException;
 
 import java.util.*;
 
@@ -32,10 +34,10 @@ public class ShopDemo {
             Actions action = Actions.valueOf(act);
             switch (action) {
                 case REGISTRATION:
-                    userDAO.addNewUser();
+                    registration();
                     break;
                 case AUTHENTICATION:
-                    user = userDAO.authUser();
+                    authentication();
                     break;
                 case SHOW_GOODS:
                     showGoods();
@@ -44,7 +46,7 @@ public class ShopDemo {
                     showCategory();
                     break;
                 case CHOOSE_PRODUCT:
-                    addToBasket();
+                    methodRepeat();
                     System.out.println(user);
                     break;
                 case SHOPPING:
@@ -71,6 +73,69 @@ public class ShopDemo {
         }
     }
 
+    private static void authentication() {
+        System.out.println("Введите логин");
+        if (scanner.hasNextLine()) {
+            String login = scanner.nextLine();
+            System.out.println("Введите пароль");
+            if (scanner.hasNextLine()) {
+                String password = scanner.nextLine();
+                user = userDAO.authUser(login, password);
+            }
+        }
+    }
+
+    public static boolean isDataCorrect(String login, String password, String confirmPassword) {
+        try {
+            if (!login.matches("[a-zA-Z0-9_-]{5,19}")) {
+                throw new WrongLoginException("Login > 20");
+            }
+            if (!password.matches("[a-zA-Z0-9_-]{5,19}") || !password.equals(confirmPassword)) {
+                throw new WrongPasswordException("Password>20 or Password != confirmPassword");
+            }
+        } catch (WrongLoginException | WrongPasswordException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    private static void registration() {
+        System.out.println("Введите логин: ");
+        if (scanner.hasNextLine()) {
+            String login = scanner.nextLine();
+            System.out.println("Введите пароль и повторите ввод");
+            if (scanner.hasNextLine()) {
+                String password = scanner.nextLine();
+                if (scanner.hasNextLine()) {
+                    String confPassword = scanner.nextLine();
+                    if (isDataCorrect(login, password, confPassword)) {
+                        userDAO.addNewUser(login, password);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void addToBasket() {
+        System.out.println("Введите название категории выбранного товара");
+        if (scanner.hasNextLine()) {
+            String catName = scanner.nextLine();
+            if (categoryDAO.getCategories().containsKey(catName)) {
+                SortedSet<Product> products = categoryDAO.getCategories().get(catName);
+                System.out.println("Введите название товара, который вы хотите добавить в корзину");
+                if (scanner.hasNextLine()) {
+                    String productName = scanner.nextLine();
+                    for (Product product : products) {
+                        if (product.getName().equals(productName)) {
+                            user.getBasket().addToBasket(product);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private static void sortGoods() {
         Set<Map.Entry<String, SortedSet<Product>>> categorySet = categoryDAO.getCategories().entrySet();
         for (Map.Entry<String, SortedSet<Product>> category : categorySet) {
@@ -90,13 +155,13 @@ public class ShopDemo {
         }
     }
 
-    private static void addToBasket() {
-        user.getBasket().addToBasket();
+    private static void methodRepeat() {
+        addToBasket();
         System.out.println("Добавить еще один товар в корзину? Y/N");
         if (scanner.hasNextLine()) {
             String act1 = scanner.nextLine();
             if (act1.equals("Y")) {
-                addToBasket();
+                methodRepeat();
             }
         }
     }
